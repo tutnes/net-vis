@@ -12,13 +12,11 @@
       "name": "Tarjei Utnes",
       "email": "tutnes@gmail.com"
     }
-    
   ],
   "dependencies": {
     "express": "^4.13.4",
     "handlebars": "^4.0.5",
     "hbs": "^4.0.0",
     "jsonfile": "^2.3.1",
-    
   }
 }
