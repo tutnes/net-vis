@@ -1,0 +1,30 @@
+//Configuration file
+
+module.exports = {
+	elasticsearch : {
+		host : "10.0.75.2:9200"
+	},
+	facebook : {
+		pageid : "",
+		index : "gjensidige-fb",
+		earliest : "2016-01-01"
+	},
+	stock : {
+		 //No need to change this
+		stockticker : "VOW.DE", //Look this up on Yahoo Finance
+		earliest : "2015-01-01" //When building the data, this will become the earliest date in the set. In the format YYYY-MM-DD
+	},
+	dcrum : {
+		base_url: "", // Base URL of CAS, specify http or https should end with a "/" example: http://cas.com/
+		earliest : "2016-01-01", //When building the data, this will become the earliest date in the set. In the format YYYY-MM-DD
+		username : "", //User that has access to REST api in DCRUM
+		password : ""
+	},
+	gtmetrix : {
+		username : "",
+		api_key : ""
+	},
+	pagespeed : {
+		api_key : ""
+	}
+};

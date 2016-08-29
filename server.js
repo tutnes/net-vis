@@ -67,11 +67,6 @@ for (var i=0; i < d.formattedData.length; i++) {
 		}
 		tmp[cIP] = true;
 		tmp[sIP] = true;
-		//console.log(output.nodes.indexOf(cIP));
-		
-		
-		
-		
 		output.links.push({source: cIP, target: sIP });
 	}
 
