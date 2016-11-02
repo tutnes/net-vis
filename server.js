@@ -7,9 +7,14 @@
 var express = require('express');
 var jsonfile = require('jsonfile');
 var handlebars = require('handlebars');
+var config = require('./config');
+var dcrum = require('./modules/dcrum');
 var hbs = require('hbs');
+var ucmdb = require('./ucmdb');
+
 var file = "json-files/netjson.json";
 var file2 = "json-files/example.json";
+var file3 = require('./json-files/hosts.json');
 // Statics for the tables and sections being generated
 var app = express();
 app.use(express.static('public'));
@@ -36,60 +41,91 @@ var output = {
     "links": []
 };
 
+var ucmdbObject = ucmdb.ucmdbData("ucmdb.csv");
+console.log(ucmdbObject);
 
-var cIP,sIP;//console.log(d.formattedData.length);
-var tmp = {};
-for (var i=0; i < d.formattedData.length; i++) {
-//for (var i=0; i < 50; i++) { //d.formattedData.length; i++) {
-	
-	
-	if (d.formattedData[i][0] != null && d.formattedData[i][1] != null) {
+function dcrumFormat() {
+	var cIP,sIP;//console.log(d.formattedData.length);
+	var tmp = {};
+	for (var i=0; i < d.formattedData.length; i++) {
+	//for (var i=0; i < 50; i++) { //d.formattedData.length; i++) {
 		
-		cIP = d.formattedData[i][0];
-		sIP = d.formattedData[i][1];
 		
-		if (tmp[sIP] == true)  {
-			console.log(sIP + " exists");
-		}
-		else
-		{
+		if (d.formattedData[i][0] !== null && d.formattedData[i][1] !== null) {
 			
-			output.nodes.push({id: sIP})
+			cIP = d.formattedData[i][0];
+			sIP = d.formattedData[i][1];
+			
+			if (tmp[sIP] === true)  {
+		//		console.log(sIP + " exists");
+			}
+			else
+			{
+				
+				output.nodes.push({id: sIP})
+			}
+
+			if (tmp[cIP] == true)  {
+		//		console.log(cIP + " exists");
+			}
+			else
+			{
+				
+				output.nodes.push({id: cIP});
+			}
+			tmp[cIP] = true;
+			tmp[sIP] = true;
+			output.links.push({source: cIP, target: sIP });
 		}
 
-		if (tmp[cIP] == true)  {
-			console.log(cIP + " exists");
-		}
-		else
-		{
-			
-			output.nodes.push({id: cIP})
-		}
-		tmp[cIP] = true;
-		tmp[sIP] = true;
-		output.links.push({source: cIP, target: sIP });
 	}
-
 }
 
-
-function in_array(array, id) {
-    for(var i=0;i<array.length;i++) {
-        return (array[i][0].id === id)
-    }
-    return false;
+function appMonFormat(d) {
+	var cIP,sIP;
+	var tmp = {};
+	for (var host in d.hostList) {
+		cIP = d.hostList[host].name;
+		sIP = findCustomer(d.hostList[host].name,ucmdbObject);
+		if (sIP === undefined) {
+			sIP = "Balle";
+		}
+		if (!tmp[sIP]) {
+			output.nodes.push({id: sIP})
+			tmp[sIP] = true;
+		}
+		output.links.push({source: cIP, target: sIP });
+		output.nodes.push({id: cIP})
+		
+	
+	}
 }
-
-
-console.log(tmp)
 
 app.get('/', function(req, res){
+  	
   	res.render('home');
 });
 
 app.get('/data', function(req, res){
-	res.send(output)
-})
+	
+	//dcrumFormat();
+	appMonFormat(file3);
+	console.log(output);
+	res.send(output);
+
+});
+
+function findCustomer(key,d) {
+	var output;
+	for (var z in d) {
+		if (key in d[z]) {
+			output = d[z].customer;
+		}
+	}
+	return output;
+}
+
+
 
 //Basic error handling
 // Basic 404 handler
